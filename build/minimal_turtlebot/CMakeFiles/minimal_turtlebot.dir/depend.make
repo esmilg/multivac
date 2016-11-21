@@ -5,7 +5,6 @@ minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: 
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /home/user/catkin_ws/src/minimal_turtlebot/src/minimal_turtlebot.cpp
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/XmlRpcDecl.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/XmlRpcValue.h
-minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/geometry_msgs/Quaternion.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/geometry_msgs/Twist.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/geometry_msgs/Vector3.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/kobuki_msgs/BumperEvent.h
@@ -66,9 +65,7 @@ minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: 
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/ros/wall_timer.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/ros/wall_timer_options.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/rosconsole/macros_generated.h
-minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/sensor_msgs/Imu.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/std_msgs/Float64.h
-minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/std_msgs/Header.h
 
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /home/user/catkin_ws/src/minimal_turtlebot/include/minimal_turtlebot/turtlebot_controller.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /home/user/catkin_ws/src/minimal_turtlebot/src/turtlebot_controller.cpp

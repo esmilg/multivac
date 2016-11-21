@@ -61,22 +61,22 @@ void bumperMessageCallback(const kobuki_msgs::BumperEvent& bumper_data_holder)
 
 void cliffMessageCallback(const kobuki_msgs::CliffEvent& cliff_data_holder) 
 { 
-	if (bumper_data_holder.bumper == bumper_data_holder.LEFT)
+	if (cliff_data_holder.sensor == cliff_data_holder.LEFT)
 	{
-		localTurtleBotInputs.leftBumperPressed = bumper_data_holder.state; 
-		ROS_INFO("left bumper pressed state is: %u",bumper_data_holder.state); 
+		localTurtleBotInputs.leftCliffGone = cliff_data_holder.state; 
+		ROS_INFO("left cliff drop state is: %u",cliff_data_holder.state); 
 	}
 	
-	if (bumper_data_holder.bumper == bumper_data_holder.CENTER)
+	if (cliff_data_holder.sensor == cliff_data_holder.CENTER)
 	{
-		localTurtleBotInputs.centerBumperPressed = bumper_data_holder.state; 
-		ROS_INFO("center bumper pressed state is: %u",bumper_data_holder.state); 
+		localTurtleBotInputs.centerCliffGone = cliff_data_holder.state; 
+		ROS_INFO("center cliff drop state is: %u",cliff_data_holder.state); 
 	}
 	
-	if (bumper_data_holder.bumper == bumper_data_holder.RIGHT)
+	if (cliff_data_holder.sensor == cliff_data_holder.RIGHT)
 	{
-		localTurtleBotInputs.rightBumperPressed = bumper_data_holder.state; 
-		ROS_INFO("right bumper pressed state is: %u",bumper_data_holder.state); 
+		localTurtleBotInputs.rightCliffGone = cliff_data_holder.state; 
+		ROS_INFO("right cliff drop state is: %u",cliff_data_holder.state); 
 	}
 
 } 
