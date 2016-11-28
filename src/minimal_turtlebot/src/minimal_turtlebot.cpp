@@ -7,6 +7,8 @@
 #include<kobuki_msgs/CliffEvent.h>
 #include <geometry_msgs/Twist.h>
 #include "minimal_turtlebot/turtlebot_controller.h"
+#include <sensor_msgs/CompressedImage.h>
+#include <sensor_msgs/Image.h>
 
 //instantiate some special types for our commands  
 kobuki_msgs::Sound soundValue; 
@@ -19,6 +21,42 @@ float localAngularSpeed=0.0;
 uint8_t soundValueUpdateCounter = 0; 
   
 turtlebotInputs localTurtleBotInputs; 
+
+void colorImageCallback(const sensor_msgs::Image& image_data_holder) 
+{ 
+	static uint32_t colorImageInfoCounter = 0; 
+	
+	localTurtleBotInputs.colorImage=image_data_holder; 
+	if (colorImageInfoCounter > 30)
+	{
+		ROS_INFO("color image height: %u",image_data_holder.height);
+		ROS_INFO("color image width: %u",image_data_holder.width);
+		colorImageInfoCounter=0; 
+	}
+	else
+	{
+		colorImageInfoCounter++; 
+	}
+
+} 
+
+void depthImageCallback(const sensor_msgs::Image& image_data_holder) 
+{ 
+	static uint32_t depthImageInfoCounter = 0; 
+	
+	localTurtleBotInputs.depthImage=image_data_holder; 
+	if (depthImageInfoCounter > 1)
+	{
+		ROS_INFO("depth image height: %u",image_data_holder.height);
+		ROS_INFO("depth image width: %u",image_data_holder.width);
+		//ROS_INFO("depth image encoding: %s",image_data_holder.encoding.c_str());
+		depthImageInfoCounter=0; 
+	}
+	else
+	{
+		depthImageInfoCounter++; 
+	}
+} 
 
 void wheelDropCallback(const kobuki_msgs::WheelDropEvent& wheel_data_holder) 
 { 
