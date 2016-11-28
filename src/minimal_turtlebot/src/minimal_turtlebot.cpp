@@ -134,6 +134,8 @@ int main(int argc, char **argv)
   ros::Subscriber my_wheel_drop_subscription= n.subscribe("mobile_base/events/wheel_drop",1,wheelDropCallback); 
   ros::Subscriber my_bumper_subscription= n.subscribe("mobile_base/events/bumper",1,bumperMessageCallback); 
   ros::Subscriber my_cliff_sensor_object = n.subscribe("mobile_base/events/cliff",1,cliffMessageCallback);
+  ros::Subscriber colorImageSubscription= n.subscribe("camera/rgb/image_rect_color",1,colorImageCallback); 
+  ros::Subscriber depthSubscription= n.subscribe("camera/depth/image_raw",1,depthImageCallback);
   
   //publish sound and command vel messages 
   ros::Publisher my_publisher_object = n.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 1);

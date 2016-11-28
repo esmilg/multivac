@@ -65,8 +65,28 @@ minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: 
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/ros/wall_timer.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/ros/wall_timer_options.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/rosconsole/macros_generated.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/sensor_msgs/CompressedImage.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/sensor_msgs/Image.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/std_msgs/Float64.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/minimal_turtlebot.cpp.o: /opt/ros/indigo/include/std_msgs/Header.h
 
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /home/user/catkin_ws/src/minimal_turtlebot/include/minimal_turtlebot/turtlebot_controller.h
 minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /home/user/catkin_ws/src/minimal_turtlebot/src/turtlebot_controller.cpp
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/builtin_message_traits.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/datatypes.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/duration.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/exception.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/macros.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/message_forward.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/message_operations.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/message_traits.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/platform.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/roscpp_serialization_macros.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/rostime_decl.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/serialization.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/serialized_message.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/time.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/ros/types.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/sensor_msgs/Image.h
+minimal_turtlebot/CMakeFiles/minimal_turtlebot.dir/src/turtlebot_controller.cpp.o: /opt/ros/indigo/include/std_msgs/Header.h
 
