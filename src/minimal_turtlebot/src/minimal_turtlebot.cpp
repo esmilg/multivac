@@ -19,7 +19,16 @@
 kobuki_msgs::Sound soundValue; 
 geometry_msgs::Twist base_cmd;
 
+//cliff booleans
+bool g_cliffDropCenter = false;
+bool g_cliffDropRight = false;
+bool g_cliffDropLeft = false;
+
+//bumper booleans
 bool g_bumperHitCenter_ = false;
+bool g_bumperHitRight_ = false;
+bool g_bumperHitLeft_ = false;
+
 bool g_firstHit_ = true;
 float g_backUpPos_ = 0;
 bool g_turn_ = true;
@@ -38,7 +47,6 @@ uint8_t soundValueUpdateCounter = 0;
   
 turtlebotInputs localTurtleBotInputs; 
 
-CliffEvent g_gliffData_;
 
 void colorImageCallback(const sensor_msgs::Image& image_data_holder) 
 { 
@@ -98,7 +106,8 @@ void bumperMessageCallback(const kobuki_msgs::BumperEvent& bumper_data_holder)
 	if (bumper_data_holder.bumper == bumper_data_holder.LEFT)
 	{
 		localTurtleBotInputs.leftBumperPressed = bumper_data_holder.state; 
-		ROS_INFO("left bumper pressed state is: %u",bumper_data_holder.state); 
+		ROS_INFO("left bumper pressed state is: %u",bumper_data_holder.state);
+		g_bumperHitLeft_ = true; 
 	}
 	
 	if (bumper_data_holder.bumper == bumper_data_holder.CENTER)
@@ -111,14 +120,14 @@ void bumperMessageCallback(const kobuki_msgs::BumperEvent& bumper_data_holder)
 	if (bumper_data_holder.bumper == bumper_data_holder.RIGHT)
 	{
 		localTurtleBotInputs.rightBumperPressed = bumper_data_holder.state; 
-		ROS_INFO("right bumper pressed state is: %u",bumper_data_holder.state); 
+		ROS_INFO("right bumper pressed state is: %u",bumper_data_holder.state);
+		g_bumperHitRight_ = true; 
 	}
 
 } 
 
 void cliffMessageCallback(const kobuki_msgs::CliffEvent& cliff_data_holder) 
 { 
-	g_CliffData = cliff_data_holder;
 
 	if (cliff_data_holder.sensor == cliff_data_holder.LEFT)
 	{
@@ -148,8 +157,9 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
     ROS_INFO("Orientation-> x: [%f], y: [%f], z: [%f], w: [%f]", msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
     ROS_INFO("Vel-> Linear: [%f], Angular: [%f]", msg->twist.twist.linear.x,msg->twist.twist.angular.z);
     
+        
     //normal behavior
-    if(g_bumperHitCenter_ == false)
+    if(g_bumperHitCenter_ == false && g_bumperHitLeft_== false && g_bumperHitRight_== false)
     {
     	g_originalDirection = msg->pose.pose.orientation.z;
     	g_firstHit_ = true;
@@ -169,8 +179,8 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
       		base_cmd.linear.x = 0;
  		}
  	}
- 	//behavior when the center bumper flag is toggled
- 	else
+ 	//behavior when the center or right bumper flag is toggled
+ 	if(g_bumperHitCenter_ || g_bumperHitRight_)
  	{
  		//store the position of the impact
  		if(g_firstHit_)
@@ -193,7 +203,7 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
  				base_cmd.angular.z = .2;
  				//robot turns to ~.83????
  				//.75
- 				if(msg->pose.pose.orientation.z > .75)
+ 				if(msg->pose.pose.orientation.z > .4)
  				{
  					base_cmd.angular.z = 0;
  					g_turn_ = false;
@@ -206,6 +216,7 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
  				{
  					g_firstTurn_ = false;
  					g_turnedForwardPos_ = msg->pose.pose.position.y + .2;
+ 					g_backUpPos_ = 20;
  				}
  				if(msg->pose.pose.position.y < g_turnedForwardPos_)
  				{
@@ -222,6 +233,7 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
  							base_cmd.angular.z = 0;
  							g_turn2_ = false;
  							g_bumperHitCenter_ = false;
+ 							g_bumperHitRight_ = false;
  						}
  					}
  				}
@@ -230,7 +242,68 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
 
  		}
  	}
+	//behavior when the left bumper flag is toggled
+ 	if(g_bumperHitLeft_)
+ 	{
+ 		//store the position of the impact
+ 		if(g_firstHit_)
+ 		{
+ 			g_firstHit_ = false;
+ 			g_backUpPos_ = (msg->pose.pose.position.x) - .2;
+ 		}
+ 		//go backwards
+ 		if(msg->pose.pose.position.x > g_backUpPos_)
+ 		{
+ 			base_cmd.linear.x = -.1;
+ 		}
+ 		//once you've reached the backUpPos
+ 		else
+ 		{
+ 			base_cmd.linear.x = 0;
+ 			//start to turn
+ 			if(g_turn_)
+ 			{
+ 				base_cmd.angular.z = -.2;
+ 				//robot turns to ~.83????
+ 				//.75
+ 				if(msg->pose.pose.orientation.z < -.4)
+ 				{
+ 					base_cmd.angular.z = 0;
+ 					g_turn_ = false;
+ 					g_sideways_ = true;
+ 				}
+ 			}
+ 			if(g_sideways_)
+ 			{
+ 				if(g_firstTurn_)
+ 				{
+ 					g_firstTurn_ = false;
+ 					g_turnedForwardPos_ = msg->pose.pose.position.y - .2;
+ 					g_backUpPos_ = 20;
+ 				}
+ 				if(msg->pose.pose.position.y > g_turnedForwardPos_)
+ 				{
+ 					base_cmd.linear.x = .1;
+ 				}
+ 				else
+ 				{
+ 					base_cmd.linear.x = 0;
+ 					if(g_turn2_)
+ 					{
+ 						base_cmd.angular.z = .2;
+ 						if(msg->pose.pose.orientation.z  >= g_originalDirection)
+ 						{
+ 							base_cmd.angular.z = 0;
+ 							g_turn2_ = false;
+ 							g_bumperHitLeft_ = false;
+ 						}
+ 					}
+ 				}
+ 			}
 
+
+ 		}
+ 	}
 } 
 
 int main(int argc, char **argv) 
