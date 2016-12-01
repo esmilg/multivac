@@ -9,10 +9,26 @@
 #include "minimal_turtlebot/turtlebot_controller.h"
 #include <sensor_msgs/CompressedImage.h>
 #include <sensor_msgs/Image.h>
+#include "std_msgs/String.h"
+//#include "nav_msgs/Odometry.h"
+
+#include <tf/transform_broadcaster.h>
+#include <nav_msgs/Odometry.h>
 
 //instantiate some special types for our commands  
 kobuki_msgs::Sound soundValue; 
 geometry_msgs::Twist base_cmd;
+
+bool g_bumperHitCenter_ = false;
+bool g_firstHit_ = true;
+float g_backUpPos_ = 0;
+bool g_turn_ = true;
+bool g_sideways_ = false;
+bool g_turn2_ = true;
+float g_turnedForwardPos_ = 0;
+bool g_firstTurn_ = true;
+
+float g_originalDirection = 0;;
 
 uint8_t localSoundValue=0; 
 float localLinearSpeed=0.0; 
@@ -21,6 +37,8 @@ float localAngularSpeed=0.0;
 uint8_t soundValueUpdateCounter = 0; 
   
 turtlebotInputs localTurtleBotInputs; 
+
+CliffEvent g_gliffData_;
 
 void colorImageCallback(const sensor_msgs::Image& image_data_holder) 
 { 
@@ -87,6 +105,7 @@ void bumperMessageCallback(const kobuki_msgs::BumperEvent& bumper_data_holder)
 	{
 		localTurtleBotInputs.centerBumperPressed = bumper_data_holder.state; 
 		ROS_INFO("center bumper pressed state is: %u",bumper_data_holder.state); 
+		g_bumperHitCenter_ = true;
 	}
 	
 	if (bumper_data_holder.bumper == bumper_data_holder.RIGHT)
@@ -99,6 +118,8 @@ void bumperMessageCallback(const kobuki_msgs::BumperEvent& bumper_data_holder)
 
 void cliffMessageCallback(const kobuki_msgs::CliffEvent& cliff_data_holder) 
 { 
+	g_CliffData = cliff_data_holder;
+
 	if (cliff_data_holder.sensor == cliff_data_holder.LEFT)
 	{
 		localTurtleBotInputs.leftCliffGone = cliff_data_holder.state; 
@@ -108,7 +129,7 @@ void cliffMessageCallback(const kobuki_msgs::CliffEvent& cliff_data_holder)
 	if (cliff_data_holder.sensor == cliff_data_holder.CENTER)
 	{
 		localTurtleBotInputs.centerCliffGone = cliff_data_holder.state; 
-		ROS_INFO("center cliff drop state is: %u",cliff_data_holder.state); 
+		ROS_INFO("center cliff drop state is: %u",cliff_data_holder.state);
 	}
 	
 	if (cliff_data_holder.sensor == cliff_data_holder.RIGHT)
@@ -116,6 +137,99 @@ void cliffMessageCallback(const kobuki_msgs::CliffEvent& cliff_data_holder)
 		localTurtleBotInputs.rightCliffGone = cliff_data_holder.state; 
 		ROS_INFO("right cliff drop state is: %u",cliff_data_holder.state); 
 	}
+
+}
+
+//
+void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
+{
+	ROS_INFO("Seq: [%d]", msg->header.seq);
+    ROS_INFO("Position-> x: [%f], y: [%f], z: [%f]", msg->pose.pose.position.x,msg->pose.pose.position.y, msg->pose.pose.position.z);
+    ROS_INFO("Orientation-> x: [%f], y: [%f], z: [%f], w: [%f]", msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
+    ROS_INFO("Vel-> Linear: [%f], Angular: [%f]", msg->twist.twist.linear.x,msg->twist.twist.angular.z);
+    
+    //normal behavior
+    if(g_bumperHitCenter_ == false)
+    {
+    	g_originalDirection = msg->pose.pose.orientation.z;
+    	g_firstHit_ = true;
+		g_backUpPos_ = 0;
+		g_turn_ = true;
+		g_sideways_ = false;
+		g_turn2_ = true;
+		g_turnedForwardPos_ = 0;
+		g_firstTurn_ = true;
+
+    	if (msg->pose.pose.position.x < 1)
+    	{ 
+    		base_cmd.linear.x = .1;
+		}
+ 		else
+ 		{
+      		base_cmd.linear.x = 0;
+ 		}
+ 	}
+ 	//behavior when the center bumper flag is toggled
+ 	else
+ 	{
+ 		//store the position of the impact
+ 		if(g_firstHit_)
+ 		{
+ 			g_firstHit_ = false;
+ 			g_backUpPos_ = (msg->pose.pose.position.x) - .2;
+ 		}
+ 		//go backwards
+ 		if(msg->pose.pose.position.x > g_backUpPos_)
+ 		{
+ 			base_cmd.linear.x = -.1;
+ 		}
+ 		//once you've reached the backUpPos
+ 		else
+ 		{
+ 			base_cmd.linear.x = 0;
+ 			//start to turn
+ 			if(g_turn_)
+ 			{
+ 				base_cmd.angular.z = .2;
+ 				//robot turns to ~.83????
+ 				//.75
+ 				if(msg->pose.pose.orientation.z > .75)
+ 				{
+ 					base_cmd.angular.z = 0;
+ 					g_turn_ = false;
+ 					g_sideways_ = true;
+ 				}
+ 			}
+ 			if(g_sideways_)
+ 			{
+ 				if(g_firstTurn_)
+ 				{
+ 					g_firstTurn_ = false;
+ 					g_turnedForwardPos_ = msg->pose.pose.position.y + .2;
+ 				}
+ 				if(msg->pose.pose.position.y < g_turnedForwardPos_)
+ 				{
+ 					base_cmd.linear.x = .1;
+ 				}
+ 				else
+ 				{
+ 					base_cmd.linear.x = 0;
+ 					if(g_turn2_)
+ 					{
+ 						base_cmd.angular.z = -.2;
+ 						if(msg->pose.pose.orientation.z  <= g_originalDirection)
+ 						{
+ 							base_cmd.angular.z = 0;
+ 							g_turn2_ = false;
+ 							g_bumperHitCenter_ = false;
+ 						}
+ 					}
+ 				}
+ 			}
+
+
+ 		}
+ 	}
 
 } 
 
@@ -133,20 +247,58 @@ int main(int argc, char **argv)
   //subscribe to wheel drop and bumper messages
   ros::Subscriber my_wheel_drop_subscription= n.subscribe("mobile_base/events/wheel_drop",1,wheelDropCallback); 
   ros::Subscriber my_bumper_subscription= n.subscribe("mobile_base/events/bumper",1,bumperMessageCallback); 
-  ros::Subscriber my_cliff_sensor_object = n.subscribe("mobile_base/events/cliff",1,cliffMessageCallback);
-  ros::Subscriber colorImageSubscription= n.subscribe("camera/rgb/image_rect_color",1,colorImageCallback); 
-  ros::Subscriber depthSubscription= n.subscribe("camera/depth/image_raw",1,depthImageCallback);
+  ros::Subscriber my_cliff_sensor_object= n.subscribe("mobile_base/events/cliff",1,cliffMessageCallback);
+  //ros::Subscriber colorImageSubscription= n.subscribe("camera/rgb/image_rect_color",1,colorImageCallback); 
+  //ros::Subscriber depthSubscription= n.subscribe("camera/depth/image_raw",1,depthImageCallback);
+  ros::Subscriber sub_odom=n.subscribe("odom",60,odomCallback);
+
   
   //publish sound and command vel messages 
   ros::Publisher my_publisher_object = n.advertise<kobuki_msgs::Sound>("mobile_base/commands/sound", 1);
-  ros::Publisher cmd_vel_pub_ = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
-
+  ros::Publisher cmd_vel_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 60);
   
-  while(ros::ok())
+
+  while (n.ok())
+  {
+  	ros::spinOnce();
+
+ 	cmd_vel_pub.publish(base_cmd);
+	
+	naptime.sleep(); 
+  }
+
+  /*
+  while (ros::ok()) //while robot is not at the end position
+  {
+    ros::spinOnce();
+    if (x_pos <x_epos)
+    { 
+    	base_cmd.linear.x = 0.19;
+		base_cmd.angular.z = 0.0;
+	}
+ 	else
+ 	{
+      	base_cmd.linear.x = -0.19;
+		base_cmd.angular.z = 0.0;
+ 	}
+
+ 	cmd_vel_pub.publish(base_cmd);
+ 	
+ 	if(x_pos >= x_epos){
+ 		ROS_INFO("PASSED ENDPOINT");
+ 	}
+  }
+
+  return 0;
+  */
+
+/*  while(ros::ok())
   {
 	ros::spinOnce();
 	turtlebot_controller(localTurtleBotInputs, &localSoundValue, &localLinearSpeed, &localAngularSpeed);
 	
+	//ROS_INFO("supposed to be cmd_vel angular = %f", localAngularSpeed);
+	//ROS_INFO("supposed to be cmd_vel linear = %f", localLinearSpeed);
 	soundValue.value=localSoundValue;
 	base_cmd.linear.x=localLinearSpeed;
 	base_cmd.angular.z=localAngularSpeed;
@@ -166,5 +318,6 @@ int main(int argc, char **argv)
 	naptime.sleep(); 
 	
   }
-  return 0; // should never get here, unless roscore dies 
-} 
+  return 0; // should never get here, unless roscore dies */
+}
+
