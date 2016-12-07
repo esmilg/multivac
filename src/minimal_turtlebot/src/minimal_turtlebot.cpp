@@ -157,7 +157,7 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
     ROS_INFO("Orientation-> x: [%f], y: [%f], z: [%f], w: [%f]", msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
     ROS_INFO("Vel-> Linear: [%f], Angular: [%f]", msg->twist.twist.linear.x,msg->twist.twist.angular.z);
     
-        
+     /*   
     //normal behavior
     if(g_bumperHitCenter_ == false && g_bumperHitLeft_== false && g_bumperHitRight_== false)
     {
@@ -304,6 +304,7 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
 
  		}
  	}
+ 	*/
 } 
 
 int main(int argc, char **argv) 
@@ -322,7 +323,7 @@ int main(int argc, char **argv)
   ros::Subscriber my_bumper_subscription= n.subscribe("mobile_base/events/bumper",1,bumperMessageCallback); 
   ros::Subscriber my_cliff_sensor_object= n.subscribe("mobile_base/events/cliff",1,cliffMessageCallback);
   //ros::Subscriber colorImageSubscription= n.subscribe("camera/rgb/image_rect_color",1,colorImageCallback); 
-  //ros::Subscriber depthSubscription= n.subscribe("camera/depth/image_raw",1,depthImageCallback);
+  ros::Subscriber depthSubscription= n.subscribe("camera/depth/image_raw",1,depthImageCallback);
   ros::Subscriber sub_odom=n.subscribe("odom",60,odomCallback);
 
   
@@ -334,9 +335,9 @@ int main(int argc, char **argv)
   while (n.ok())
   {
   	ros::spinOnce();
-
+	turtlebot_controller(localTurtleBotInputs, &localSoundValue, &localLinearSpeed, &localAngularSpeed);
  	cmd_vel_pub.publish(base_cmd);
-	
+	ROS_INFO("hello");
 	naptime.sleep(); 
   }
 

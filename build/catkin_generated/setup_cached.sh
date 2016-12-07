@@ -8,8 +8,7 @@
 
 # modified environment variables
 export CMAKE_PREFIX_PATH="/home/user/catkin_ws/devel:$CMAKE_PREFIX_PATH"
-export LD_LIBRARY_PATH="/opt/ros/indigo/share/euslisp/jskeus/eus//Linux64/lib:/home/user/catkin_ws/devel/lib:/opt/ros/indigo/lib/x86_64-linux-gnu:/opt/ros/indigo/share/euslisp/jskeus/eus//Linux64/lib:/opt/ros/indigo/share/euslisp/jskeus/eus//Linux64/lib:/opt/ros/indigo/share/euslisp/jskeus/eus//Linux64/lib:/opt/ros/indigo/share/euslisp/jskeus/eus//Linux64/lib:/opt/ros/indigo/lib:/opt/ros/indigo/lib/python2.7/dist-packages:/opt/ros/indigo/lib/python2.7/dist-packages:/opt/ros/indigo/lib/python2.7/dist-packages:/opt/ros/indigo/lib/python2.7/dist-packages"
-export PATH="/opt/ros/indigo/share/euslisp/jskeus/eus//Linux64/bin:/opt/ros/indigo/bin:/opt/ros/indigo/share/euslisp/jskeus/eus//Linux64/bin:/opt/ros/indigo/share/euslisp/jskeus/eus//Linux64/bin:/opt/ros/indigo/share/euslisp/jskeus/eus//Linux64/bin:/opt/ros/indigo/share/euslisp/jskeus/eus//Linux64/bin:/usr/share/centrifydc/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+export LD_LIBRARY_PATH="/home/user/catkin_ws/devel/lib:$LD_LIBRARY_PATH"
 export PKG_CONFIG_PATH="/home/user/catkin_ws/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD="/home/user/catkin_ws/build"
 export ROSLISP_PACKAGE_DIRECTORIES="/home/user/catkin_ws/devel/share/common-lisp"
