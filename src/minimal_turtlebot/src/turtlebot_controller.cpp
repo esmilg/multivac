@@ -32,26 +32,40 @@ void turtlebot_controller(turtlebotInputs turtlebot_inputs, uint8_t *soundValue,
 	//soundValue.CLEANINGSTART
 	//soundValue.CLEANINGEND 	fstream file;
 	ROS_INFO("hi 1 %i", turtlebot_inputs.depthImage.width);
+	// if(turtlebot_inputs.depthImage.width != 0)
+	// {
+
+	// 	ROS_INFO("hi 2");
+
+	// 	ofstream file;
+	// 	file.open("test.txt");
+	// 	int s = 0;
+	// 	for(int i = 0; i < 614400 / 2; i++)
+	// 	{
+	// 		file << (turtlebot_inputs.depthImage.data[s]);
+	// 		file << (turtlebot_inputs.depthImage.data[s + 1]) << "\n";
+	// 		s = s + 2;
+	// 	}
+
+	// 	ROS_INFO("size: [%u]", turtlebot_inputs.depthImage.data[s]);
+
+	// 	file.close();
+	// }
+	uint16_t depthData[turtlebot_inputs.depthImage.height * turtlebot_inputs.depthImage.width];
+
 	if(turtlebot_inputs.depthImage.width != 0)
 	{
-
-		ROS_INFO("hi 2");
-
-		ofstream file;
-		file.open("test.txt");
-		int s = 0;
-		for(int i = 0; i < 614400 / 2; i++)
+		for(int indx = 0; indx < (turtlebot_inputs.depthImage.height*turtlebot_inputs.depthImage.width); indx++)
 		{
-			file << (turtlebot_inputs.depthImage.data[s]);
-			file << (turtlebot_inputs.depthImage.data[s + 1]) << "\n";
-			s = s + 2;
+			printf("%4.4X ", depthData[indx]);
+			depthData[indx] = turtlebot_inputs.depthImage.data[indx*2]|(turtlebot_inputs.depthImage.data[indx*2+1]<<8);
+			if(indx%640 == 0)
+			{
+				printf("\n");
+			}
 		}
-
-		ROS_INFO("size: [%u]", turtlebot_inputs.depthImage.data[s]);
-
-		file.close();
+		printf("\n");
 	}
-
 
 }
 
