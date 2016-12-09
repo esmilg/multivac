@@ -70,7 +70,6 @@ void turtlebot_controller(turtlebotInputs turtlebot_inputs, uint8_t *soundValue,
 				//printf("\n");
 			}
 		}
-		printf("\n");
 
 		//DepthImage ranges from roughly .5m to 5.2m
 

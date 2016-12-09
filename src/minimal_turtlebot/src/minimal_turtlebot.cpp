@@ -24,6 +24,8 @@ bool g_cliffDropCenter = false;
 bool g_cliffDropRight = false;
 bool g_cliffDropLeft = false;
 
+bool g_firstCliff = true;
+
 //bumper booleans
 bool g_bumperHitCenter_ = false;
 bool g_bumperHitRight_ = false;
@@ -139,6 +141,7 @@ void cliffMessageCallback(const kobuki_msgs::CliffEvent& cliff_data_holder)
 	{
 		localTurtleBotInputs.centerCliffGone = cliff_data_holder.state; 
 		ROS_INFO("center cliff drop state is: %u",cliff_data_holder.state);
+		g_cliffDropCenter = true;
 	}
 	
 	if (cliff_data_holder.sensor == cliff_data_holder.RIGHT)
@@ -152,16 +155,17 @@ void cliffMessageCallback(const kobuki_msgs::CliffEvent& cliff_data_holder)
 //
 void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
 {
-	ROS_INFO("Seq: [%d]", msg->header.seq);
-    ROS_INFO("Position-> x: [%f], y: [%f], z: [%f]", msg->pose.pose.position.x,msg->pose.pose.position.y, msg->pose.pose.position.z);
-    ROS_INFO("Orientation-> x: [%f], y: [%f], z: [%f], w: [%f]", msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
-    ROS_INFO("Vel-> Linear: [%f], Angular: [%f]", msg->twist.twist.linear.x,msg->twist.twist.angular.z);
+	// ROS_INFO("Seq: [%d]", msg->header.seq);
+ //    ROS_INFO("Position-> x: [%f], y: [%f], z: [%f]", msg->pose.pose.position.x,msg->pose.pose.position.y, msg->pose.pose.position.z);
+ //    ROS_INFO("Orientation-> x: [%f], y: [%f], z: [%f], w: [%f]", msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
+ //    ROS_INFO("Vel-> Linear: [%f], Angular: [%f]", msg->twist.twist.linear.x,msg->twist.twist.angular.z);
       
     //normal behavior
-    if(g_bumperHitCenter_ == false && g_bumperHitLeft_== false && g_bumperHitRight_== false)
+    if(g_bumperHitCenter_ == false && g_bumperHitLeft_== false && g_bumperHitRight_== false && g_cliffDropCenter== false)
     {
     	g_originalDirection = msg->pose.pose.orientation.z;
     	g_firstHit_ = true;
+    	g_firstCliff = true;
 		g_backUpPos_ = 0;
 		g_turn_ = true;
 		g_sideways_ = false;
@@ -169,7 +173,7 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
 		g_turnedForwardPos_ = 0;
 		g_firstTurn_ = true;
 
-    	if (msg->pose.pose.position.x < 3)
+    	if (msg->pose.pose.position.x < 1)
     	{ 
     		base_cmd.linear.x = .1;
 		}
@@ -295,6 +299,70 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
  							base_cmd.angular.z = 0;
  							g_turn2_ = false;
  							g_bumperHitLeft_ = false;
+ 						}
+ 					}
+ 				}
+ 			}
+
+
+ 		}
+ 	}
+
+ 	if(g_cliffDropCenter)
+ 	{
+ 		//store the position of the impact
+ 		if(g_firstCliff)
+ 		{
+ 			g_firstCliff = false;
+ 			g_backUpPos_ = (msg->pose.pose.position.x) - .2;
+ 		}
+ 		//go backwards
+ 		if(msg->pose.pose.position.x > g_backUpPos_)
+ 		{
+ 			base_cmd.linear.x = -.1;
+ 		}
+ 		//once you've reached the backUpPos
+ 		else
+ 		{
+ 			base_cmd.linear.x = 0;
+ 			//start to turn
+ 			if(g_turn_)
+ 			{
+ 				base_cmd.angular.z = .2;
+ 				//robot turns to ~.83????
+ 				//.75
+ 				if(msg->pose.pose.orientation.z > .4)
+ 				{
+ 					base_cmd.angular.z = 0;
+ 					g_turn_ = false;
+ 					g_sideways_ = true;
+ 				}
+ 			}
+ 			if(g_sideways_)
+ 			{
+ 				if(g_firstTurn_)
+ 				{
+ 					g_firstTurn_ = false;
+ 					g_turnedForwardPos_ = msg->pose.pose.position.y + .2;
+ 					g_backUpPos_ = 20;
+ 				}
+ 				if(msg->pose.pose.position.y < g_turnedForwardPos_)
+ 				{
+ 					base_cmd.linear.x = .1;
+ 				}
+ 				else
+ 				{
+ 					base_cmd.linear.x = 0;
+ 					if(g_turn2_)
+ 					{
+ 						base_cmd.angular.z = -.2;
+ 						if(msg->pose.pose.orientation.z  <= g_originalDirection)
+ 						{
+ 							base_cmd.angular.z = 0;
+ 							g_turn2_ = false;
+ 							g_bumperHitCenter_ = false;
+ 							g_bumperHitRight_ = false;
+ 							g_cliffDropCenter = false;
  						}
  					}
  				}
