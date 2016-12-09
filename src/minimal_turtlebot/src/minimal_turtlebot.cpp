@@ -73,8 +73,8 @@ void depthImageCallback(const sensor_msgs::Image& image_data_holder)
 	localTurtleBotInputs.depthImage=image_data_holder; 
 	if (depthImageInfoCounter > 1)
 	{
-		ROS_INFO("depth image height: %u",image_data_holder.height);
-		ROS_INFO("depth image width: %u",image_data_holder.width);
+		// ROS_INFO("depth image height: %u",image_data_holder.height);
+		// ROS_INFO("depth image width: %u",image_data_holder.width);
 		//ROS_INFO("depth image encoding: %s",image_data_holder.encoding.c_str());
 		depthImageInfoCounter=0; 
 	}
@@ -152,10 +152,10 @@ void cliffMessageCallback(const kobuki_msgs::CliffEvent& cliff_data_holder)
 //
 void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
 {
-	ROS_INFO("Seq: [%d]", msg->header.seq);
-    ROS_INFO("Position-> x: [%f], y: [%f], z: [%f]", msg->pose.pose.position.x,msg->pose.pose.position.y, msg->pose.pose.position.z);
-    ROS_INFO("Orientation-> x: [%f], y: [%f], z: [%f], w: [%f]", msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
-    ROS_INFO("Vel-> Linear: [%f], Angular: [%f]", msg->twist.twist.linear.x,msg->twist.twist.angular.z);
+	// ROS_INFO("Seq: [%d]", msg->header.seq);
+ //    ROS_INFO("Position-> x: [%f], y: [%f], z: [%f]", msg->pose.pose.position.x,msg->pose.pose.position.y, msg->pose.pose.position.z);
+ //    ROS_INFO("Orientation-> x: [%f], y: [%f], z: [%f], w: [%f]", msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
+ //    ROS_INFO("Vel-> Linear: [%f], Angular: [%f]", msg->twist.twist.linear.x,msg->twist.twist.angular.z);
     
      /*   
     //normal behavior
@@ -337,7 +337,7 @@ int main(int argc, char **argv)
   	ros::spinOnce();
 	turtlebot_controller(localTurtleBotInputs, &localSoundValue, &localLinearSpeed, &localAngularSpeed);
  	cmd_vel_pub.publish(base_cmd);
-	ROS_INFO("hello");
+	//ROS_INFO("hello");
 	naptime.sleep(); 
   }
 
