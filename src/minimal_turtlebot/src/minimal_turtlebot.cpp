@@ -152,12 +152,11 @@ void cliffMessageCallback(const kobuki_msgs::CliffEvent& cliff_data_holder)
 //
 void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
 {
-	// ROS_INFO("Seq: [%d]", msg->header.seq);
- //    ROS_INFO("Position-> x: [%f], y: [%f], z: [%f]", msg->pose.pose.position.x,msg->pose.pose.position.y, msg->pose.pose.position.z);
- //    ROS_INFO("Orientation-> x: [%f], y: [%f], z: [%f], w: [%f]", msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
- //    ROS_INFO("Vel-> Linear: [%f], Angular: [%f]", msg->twist.twist.linear.x,msg->twist.twist.angular.z);
-    
-     /*   
+	ROS_INFO("Seq: [%d]", msg->header.seq);
+    ROS_INFO("Position-> x: [%f], y: [%f], z: [%f]", msg->pose.pose.position.x,msg->pose.pose.position.y, msg->pose.pose.position.z);
+    ROS_INFO("Orientation-> x: [%f], y: [%f], z: [%f], w: [%f]", msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
+    ROS_INFO("Vel-> Linear: [%f], Angular: [%f]", msg->twist.twist.linear.x,msg->twist.twist.angular.z);
+      
     //normal behavior
     if(g_bumperHitCenter_ == false && g_bumperHitLeft_== false && g_bumperHitRight_== false)
     {
@@ -304,7 +303,6 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
 
  		}
  	}
- 	*/
 } 
 
 int main(int argc, char **argv) 
@@ -337,34 +335,32 @@ int main(int argc, char **argv)
   	ros::spinOnce();
 	turtlebot_controller(localTurtleBotInputs, &localSoundValue, &localLinearSpeed, &localAngularSpeed);
  	cmd_vel_pub.publish(base_cmd);
-	//ROS_INFO("hello");
+	ROS_INFO("hello");
 	naptime.sleep(); 
   }
 
-  /*
-  while (ros::ok()) //while robot is not at the end position
-  {
-    ros::spinOnce();
-    if (x_pos <x_epos)
-    { 
-    	base_cmd.linear.x = 0.19;
-		base_cmd.angular.z = 0.0;
-	}
- 	else
- 	{
-      	base_cmd.linear.x = -0.19;
-		base_cmd.angular.z = 0.0;
- 	}
+ //  while (ros::ok()) //while robot is not at the end position
+ //  {
+ //    ros::spinOnce();
+ //    if (x_pos < x_epos)
+ //    { 
+ //    	base_cmd.linear.x = 0.19;
+	// 	base_cmd.angular.z = 0.0;
+	// }
+ // 	else
+ // 	{
+ //      	base_cmd.linear.x = -0.19;
+	// 	base_cmd.angular.z = 0.0;
+ // 	}
 
- 	cmd_vel_pub.publish(base_cmd);
+ // 	cmd_vel_pub.publish(base_cmd);
  	
- 	if(x_pos >= x_epos){
- 		ROS_INFO("PASSED ENDPOINT");
- 	}
-  }
+ // 	if(x_pos >= x_epos){
+ // 		ROS_INFO("PASSED ENDPOINT");
+ // 	}
+ //  }
 
   return 0;
-  */
 
 /*  while(ros::ok())
   {
