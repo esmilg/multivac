@@ -169,7 +169,7 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
 		g_turnedForwardPos_ = 0;
 		g_firstTurn_ = true;
 
-    	if (msg->pose.pose.position.x < 1)
+    	if (msg->pose.pose.position.x < 3)
     	{ 
     		base_cmd.linear.x = .1;
 		}
